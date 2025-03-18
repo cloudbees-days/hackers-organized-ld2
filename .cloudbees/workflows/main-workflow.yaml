@@ -118,7 +118,7 @@ jobs:
         with:
           orgname: ${{ secrets.SNYK_ORGNAME }}
           token: ${{ secrets.SNYK_TOKEN }}
-          language: LANGUAGE_JS
+          language: "LANGUAGE_JS"
       - name: Fetch SonarQube Issues
         id: FetchSonarQubeIssues
         uses: docker://alpine/git:latest
@@ -179,6 +179,14 @@ jobs:
 
             Running hackers-organized:${{ cloudbees.scm.sha }}
           format: MARKDOWN
+      - name: Register_deployed_artifact
+        uses: https://github.com/cloudbees-io/register-deployed-artifact@v1
+        with:
+          name: "${{ secrets.DOCKERHUB_USER }}/hackers-organized"
+          version: "${{ cloudbees.scm.sha }}"
+          url: "${{ secrets.DOCKERHUB_USER }}/hackers-organized:${{ cloudbees.scm.sha }}"
+          digest: ""
+          target-environment: LD Production
     needs:
       - build-container-image
       - scan
